@@ -1,0 +1,82 @@
+version: "3.7"
+
+services:
+  caddy:
+    image: caddy:2
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - caddy
+    volumes:
+      - ./proxy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+      - nextcloud:/opt/nextcloud
+
+  nextcloud:
+    build: ./nextcloud
+    restart: always
+    volumes:
+      - nextcloud:/var/www/html
+      - ./nextcloud/imagemagick/policy.xml:/etc/ImageMagick-6/policy.xml
+      - ./nextcloud/config/custom.config.php:/var/www/html/config/custom.config.php
+    environment:
+      - POSTGRES_HOST=db
+      - REDIS_HOST=redis
+    env_file:
+      - db.env
+    depends_on:
+      - db
+      - redis
+      - elasticsearch
+    networks:
+      - caddy
+      - default
+
+  cron:
+    image: nextcloud:fpm-alpine
+    restart: always
+    volumes:
+      - nextcloud:/var/www/html
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+      - redis
+      - elasticsearch
+
+  redis:
+    image: redis:alpine
+    restart: always
+  
+  db:
+    image: postgres:alpine
+    restart: always
+    volumes:
+      - db:/var/lib/postgresql/data
+    env_file:
+      - db.env
+
+  elasticsearch:
+    build: ./elasticsearch
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
+    env_file:
+      - elasticsearch/elasticsearch.env
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+
+volumes:
+  caddy_data: 
+  caddy_config: 
+  db: 
+  nextcloud: 
+  elasticsearch: 
+
+networks:
+  caddy: 
+    external: true

@@ -1,0 +1,34 @@
+testing.kosmoz.at {
+	root * /opt/nextcloud
+	file_server
+
+	php_fastcgi nextcloud:9000 {
+		env front_controller_active true
+		root /var/www/html
+	}
+
+	encode gzip
+
+	header {
+		Strict-Transport-Security max-age=15768000;includeSubDomains;preload
+	}
+
+	redir /.well-known/caldav /remote.php/dav 301
+	redir /.well-known/carddav /remote.php/dav 301
+
+	@forbidden {
+		path /.htaccess
+		path /data/*
+		path /config/*
+		path /db_structure
+		path /.xml
+		path /README
+		path /3rdparty/*
+		path /lib/*
+		path /templates/*
+		path /occ
+		path /console.php
+	}
+
+	respond @forbidden 404
+}
