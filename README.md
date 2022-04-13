@@ -52,16 +52,8 @@ Future index updates will be handled by the nextcloud cronjob.
 Go to `/settings/admin`. Enter SMTP data.
 
 ### Default Phone Region
-
-Edit the `config.php` file:
-```shell
-sudo nano /var/lib/docker/volumes/nextcloud-plus_nextcloud/_data/config/config.php
-```
-
-Add the following line (replacing `XX` with your region, e.g.  `DE` or `AT`):
-```
-'default_phone_region' => 'XX',
-```
+Edit the file `nextcloud/config/custom.config.php`.
 
 ## TODO
+- [ ] Document `env` files
 - [ ] OCR using tesseract (Installed but not verified)
