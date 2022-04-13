@@ -57,3 +57,4 @@ Edit the file `nextcloud/config/custom.config.php`.
 ## TODO
 - [ ] Document `env` files
 - [ ] OCR using tesseract (Installed but not verified)
+- [ ] Check if fulltextsearch index update is performed with cron
