@@ -33,9 +33,9 @@ services:
       - elasticsearch
     networks:
       - caddy
-      - default
+      - nextcloud
 
-  cron:
+  nextcloud-cron:
     image: nextcloud:fpm-alpine
     restart: always
     volumes:
@@ -45,10 +45,14 @@ services:
       - db
       - redis
       - elasticsearch
+    networks:
+      - nextcloud
 
   redis:
     image: redis:alpine
     restart: always
+    networks:
+      - nextcloud
   
   db:
     image: postgres:alpine
@@ -57,6 +61,8 @@ services:
       - db:/var/lib/postgresql/data
     env_file:
       - db.env
+    networks:
+      - nextcloud
 
   elasticsearch:
     build: ./elasticsearch
@@ -69,6 +75,8 @@ services:
       - elasticsearch/elasticsearch.env
     volumes:
       - elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - nextcloud
 
 volumes:
   caddy_data: 
@@ -79,3 +87,4 @@ volumes:
 
 networks:
   caddy: 
+  nextcloud: 
