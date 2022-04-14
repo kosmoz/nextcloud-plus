@@ -19,8 +19,17 @@ This repository showcases an advanced Nextcloud installation. The following feat
 ### Starting the server
 
 ```shell
-docker network create caddy
 docker-compose up -d
+```
+
+### Contacts, Calendar integration
+
+This is useful if you want to use Nextcloud to sync/backup your calendars, contacts and tasks from your phone.
+
+```shell
+docker-compose exec -u www-data nextcloud ./occ app:install contacts
+docker-compose exec -u www-data nextcloud ./occ app:install calendar
+docker-compose exec -u www-data nextcloud ./occ app:install tasks
 ```
 
 ### Full text search
@@ -29,6 +38,13 @@ Install the following Nextcloud apps:
 - Full text search
 - Full text search - Elasticsearch Platform
 - Full text search - Files
+
+```shell
+docker-compose exec -u www-data nextcloud ./occ app:install fulltextsearch
+docker-compose exec -u www-data nextcloud ./occ app:install fulltextsearch_elasticsearch
+docker-compose exec -u www-data nextcloud ./occ app:install files_fulltextsearch
+docker-compose exec -u www-data nextcloud ./occ app:install files_fulltextsearch_tesseract
+```
 
 Go to `/settings/admin/fulltextsearch` and configure elasticsearch:
 - Server address: `http://elastic:mysecretpassword@elasticsearch:9200`
